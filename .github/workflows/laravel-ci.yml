@@ -41,7 +41,7 @@ jobs: # <-- Bloco principal para todos os jobs
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /home/u519919949/domains/sigochef.com.br/public_html/
+            cd /home/u909427438/domains/sigovariedades.shop/public_html/
             git pull origin main
             rm -f bootstrap/cache/*.php
             composer install --no-dev --optimize-autoloader
