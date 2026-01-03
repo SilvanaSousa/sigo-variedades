@@ -98,8 +98,20 @@
                         </div>
                         <h3 class="font-black text-gray-900 group-hover:bg-gradient-to-r group-hover:from-indigo-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-colors line-clamp-1 mb-1">{{ $product->name }}</h3>
                         <p class="text-sm text-gray-500 font-semibold line-clamp-1 mb-5">{{ $product->category->name }}</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">R$ {{ number_format($product->price, 2, ',', '.') }}</span>
+                        <div class="flex flex-col justify-end min-h-[3.5rem]">
+                            @if($product->hasPromotion())
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-sm text-gray-400 line-through font-medium">R$ {{ number_format($product->price, 2, ',', '.') }}</span>
+                                    @if($product->discountPercentage())
+                                        <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full">-{{ $product->discountPercentage() }}%</span>
+                                    @endif
+                                </div>
+                                <span class="text-2xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">R$ {{ number_format($product->promo_price, 2, ',', '.') }}</span>
+                            @else
+                                <span class="text-2xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">R$ {{ number_format($product->price, 2, ',', '.') }}</span>
+                            @endif
+                        </div>
+                        <div class="flex items-center justify-end mt-2">
                             <a href="{{ route('products.show', $product) }}" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-3 rounded-2xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg shadow-indigo-400/50 hover:shadow-purple-400/50 transform active:scale-95">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                             </a>

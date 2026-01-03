@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 /**
  * Public Routes
  */
-Route::group([], function () {
+Route::group(['middleware' => ['throttle:60,1']], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::get('/products', [ProductController::class, 'index'])->name('products.index');
     Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
@@ -31,6 +31,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
  */
 Route::prefix('admin')->name('admin.')->middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/reset-metrics', [DashboardController::class, 'resetMetrics'])->name('reset-metrics');
     Route::resource('products', AdminProductController::class);
     Route::resource('categories', CategoryController::class);
 });

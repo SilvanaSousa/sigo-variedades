@@ -1,0 +1,13 @@
+Options +FollowSymLinks -Indexes
+RewriteEngine On
+
+# Permitir acesso direto a arquivos dentro de public/
+RewriteCond %{REQUEST_URI} !^/public/
+
+# Se a requisição for para arquivos estáticos, redireciona para public/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*\.(css|js|png|jpg|PNG|JPG|jpeg|gif|svg|woff|woff2|ttf|eot|ico|pdf|webp|mp4|mp3))$ public/$1 [L]
+
+# Redirecionar todas as requisições para o index.php na raiz
+RewriteRule ^ index.php [L]

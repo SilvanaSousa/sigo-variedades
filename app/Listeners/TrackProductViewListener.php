@@ -24,7 +24,8 @@ class TrackProductViewListener
      */
     public function handle(ProductViewed $event): void
     {
-        $uuid = Request::cookie('visit_uuid');
+        // Get UUID injected by middleware
+        $uuid = request()->attributes->get('visit_uuid');
         
         if (!$uuid) {
             return;
@@ -33,10 +34,19 @@ class TrackProductViewListener
         $visit = Visit::where('uuid', $uuid)->latest()->first();
 
         if ($visit) {
-            ProductView::create([
-                'visit_id' => $visit->id,
-                'product_id' => $event->product->id,
-            ]);
+            // Check if this IP has already viewed this product
+            $alreadyViewed = ProductView::where('product_id', $event->product->id)
+                ->whereHas('visit', function ($query) use ($visit) {
+                    $query->where('ip_hash', $visit->ip_hash);
+                })
+                ->exists();
+
+            if (!$alreadyViewed) {
+                ProductView::create([
+                    'visit_id' => $visit->id,
+                    'product_id' => $event->product->id,
+                ]);
+            }
         }
     }
 }

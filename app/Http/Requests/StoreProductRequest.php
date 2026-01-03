@@ -19,6 +19,8 @@ class StoreProductRequest extends FormRequest
             'short_description' => ['nullable', 'string', 'max:500'],
             'description' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
+            'is_on_sale' => ['boolean'],
+            'promo_price' => ['nullable', 'numeric', 'lt:price'],
             'affiliate_url' => ['required', 'url', 'max:2048'],
             'category_id' => ['required', 'exists:categories,id'],
             'is_active' => ['boolean'],

@@ -30,6 +30,7 @@ class ProductController extends Controller
         $data = $request->validated();
         $data['slug'] = Str::slug($request->name) . '-' . Str::random(6);
         $data['is_active'] = $request->boolean('is_active');
+        $data['is_on_sale'] = $request->boolean('is_on_sale');
 
         if ($request->hasFile('image')) {
             $data['image_path'] = $request->file('image')->store('products', 'public');
@@ -54,6 +55,7 @@ class ProductController extends Controller
              $data['slug'] = Str::slug($request->name) . '-' . Str::random(6);
         }
         $data['is_active'] = $request->boolean('is_active');
+        $data['is_on_sale'] = $request->boolean('is_on_sale');
 
         if ($request->hasFile('image')) {
              // Delete old image if exists

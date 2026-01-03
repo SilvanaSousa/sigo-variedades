@@ -1,148 +1,197 @@
 @extends('layouts.admin')
 
 @section('content')
-    <div class="mb-8 flex items-center justify-between">
+    <!-- Page Header -->
+    <div class="mb-10 flex items-center justify-between">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Editar Produto</h1>
-            <p class="mt-1 text-sm text-gray-500">Atualize as informações de <span class="font-semibold text-indigo-600">{{ $product->name }}</span>.</p>
+            <h1 class="text-4xl font-black bg-gradient-to-r from-gray-900 via-indigo-900 to-purple-900 bg-clip-text text-transparent">Editar Produto</h1>
+            <p class="mt-2 text-gray-600 font-medium">Atualize as informações de <span class="font-bold text-indigo-600">{{ $product->name }}</span></p>
         </div>
-        <a href="{{ route('admin.products.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200">
-            <svg class="-ml-1 mr-2 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        <x-button variant="secondary" href="{{ route('admin.products.index') }}">
+            <svg class="-ml-1 mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
             </svg>
             Voltar
-        </a>
+        </x-button>
     </div>
 
-    <div class="max-w-4xl mx-auto">
-        <div class="bg-white shadow-xl shadow-gray-200/50 rounded-2xl overflow-hidden border border-gray-100">
-            <div class="p-8">
-                <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
-                    @csrf
-                    @method('PUT')
+    <div class="max-w-4xl">
+        <x-card>
+            <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+                @csrf
+                @method('PUT')
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                        <div class="col-span-2">
-                            <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Nome do Produto</label>
-                            <input type="text" name="name" id="name" value="{{ old('name', $product->name) }}" 
-                                class="block w-full px-4 py-3 rounded-xl border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 placeholder-gray-400 sm:text-sm" 
-                                placeholder="Ex: Smartphone XYZ Pro" required>
-                            @error('name') <p class="mt-2 text-sm text-red-600 flex items-center"><svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>{{ $message }}</p> @enderror
-                        </div>
-
-                        <div>
-                            <label for="category_id" class="block text-sm font-semibold text-gray-700 mb-2">Categoria</label>
-                            <div class="relative">
-                                <select id="category_id" name="category_id" 
-                                    class="block w-full px-4 py-3 rounded-xl border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 sm:text-sm appearance-none cursor-pointer">
-                                    <option value="">Selecione uma categoria...</option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                                </div>
-                            </div>
-                            @error('category_id') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div>
-                            <label for="price" class="block text-sm font-semibold text-gray-700 mb-2">Preço (R$)</label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500">R$</div>
-                                <input type="number" step="0.01" name="price" id="price" value="{{ old('price', $product->price) }}" 
-                                    class="block w-full pl-10 pr-4 py-3 rounded-xl border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 sm:text-sm" 
-                                    placeholder="0,00" required>
-                            </div>
-                            @error('price') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div class="col-span-2">
-                            <label for="image" class="block text-sm font-semibold text-gray-700 mb-2">Imagem do Produto</label>
-                            
-                            @if($product->image_path)
-                                <div class="mb-4 flex items-center space-x-4 p-4 rounded-xl border border-gray-100 bg-gray-50/50">
-                                    <img src="{{ asset('storage/' . $product->image_path) }}" alt="Imagem Atual" class="h-20 w-20 object-cover rounded-lg shadow-sm">
-                                    <span class="text-xs text-gray-500">Imagem atual do produto</span>
-                                </div>
-                            @endif
-
-                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-200 border-dashed rounded-2xl bg-gray-50 transition-all duration-200 hover:bg-gray-100/50">
-                                <div class="space-y-2 text-center">
-                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                    <div class="flex text-sm text-gray-600 text-center justify-center">
-                                        <label for="image" class="relative cursor-pointer bg-white rounded-md font-semibold text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500 transition-all duration-200">
-                                            <span>Substituir arquivo</span>
-                                            <input id="image" name="image" type="file" class="sr-only">
-                                        </label>
-                                    </div>
-                                    <p class="text-xs text-gray-500">PNG, JPG, GIF até 2MB</p>
-                                </div>
-                            </div>
-                            @error('image') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div class="col-span-2">
-                            <label for="affiliate_url" class="block text-sm font-semibold text-gray-700 mb-2">Link de Afiliado</label>
-                            <input type="url" name="affiliate_url" id="affiliate_url" value="{{ old('affiliate_url', $product->affiliate_url) }}" 
-                                class="block w-full px-4 py-3 rounded-xl border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 sm:text-sm" 
-                                placeholder="https://shopee.com.br/exemplo" required>
-                            @error('affiliate_url') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div class="col-span-2">
-                            <label for="short_description" class="block text-sm font-semibold text-gray-700 mb-2">Descrição Curta</label>
-                            <textarea name="short_description" id="short_description" rows="2" 
-                                class="block w-full px-4 py-3 rounded-xl border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 sm:text-sm" 
-                                placeholder="Uma breve introdução sobre o produto...">{{ old('short_description', $product->short_description) }}</textarea>
-                            @error('short_description') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div class="col-span-2">
-                            <label for="description" class="block text-sm font-semibold text-gray-700 mb-2">Descrição Completa</label>
-                            <textarea name="description" id="description" rows="5" 
-                                class="block w-full px-4 py-3 rounded-xl border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 sm:text-sm" 
-                                placeholder="Detalhes completos sobre o produto, benefícios, ficha técnica...">{{ old('description', $product->description) }}</textarea>
-                            @error('description') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div class="col-span-2">
-                            <label class="inline-flex items-center cursor-pointer group">
-                                <div class="relative">
-                                    <input id="is_active" name="is_active" type="checkbox" value="1" {{ old('is_active', $product->is_active) ? 'checked' : '' }} class="sr-only">
-                                    <div class="block bg-gray-200 w-12 h-7 rounded-full shadow-inner transition-colors duration-200 group-hover:bg-gray-300"></div>
-                                    <div class="dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full shadow-md transition-transform duration-200 transform"></div>
-                                </div>
-                                <div class="ml-4">
-                                    <span class="text-sm font-semibold text-gray-700">Produto Ativo</span>
-                                    <p class="text-xs text-gray-500">Este produto ficará visível publicamente na loja.</p>
-                                </div>
-                            </label>
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <x-form-input
+                            label="Nome do Produto"
+                            name="name"
+                            :value="old('name', $product->name)"
+                            placeholder="Ex: Smartphone XYZ Pro"
+                            :required="true"
+                            :error="$errors->first('name')"
+                        />
                     </div>
 
-                    <div class="pt-8 border-t border-gray-100 flex items-center justify-end space-x-4">
-                        <a href="{{ route('admin.products.index') }}" class="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">Cancelar</a>
-                        <button type="submit" class="inline-flex justify-center py-3 px-8 border border-transparent shadow-lg shadow-indigo-200 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform transition-all duration-200 hover:scale-[1.02] active:scale-95">
-                            Atualizar Produto
-                        </button>
+                    <x-form-input
+                        label="Preço"
+                        name="price"
+                        type="number"
+                        step="0.01"
+                        :value="old('price', $product->price)"
+                        placeholder="0.00"
+                        :required="true"
+                        :error="$errors->first('price')"
+                        helper="Informe o preço em reais"
+                    />
+
+                    <div class="space-y-2">
+                        <label for="category_id" class="block text-sm font-bold text-gray-700">
+                            Categoria <span class="text-red-500">*</span>
+                        </label>
+                        <select 
+                            name="category_id" 
+                            id="category_id"
+                            required
+                            class="block w-full px-4 py-3 rounded-xl border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 sm:text-sm"
+                        >
+                            <option value="">Selecione uma categoria</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('category_id')
+                            <p class="mt-2 text-sm text-red-600 flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                                {{ $message }}
+                            </p>
+                        @enderror
                     </div>
-                </form>
-            </div>
-        </div>
+                    </div>
+                </div>
+
+                <!-- Promotion Section -->
+                <div x-data="{ isOnSale: {{ old('is_on_sale', $product->is_on_sale) ? 'true' : 'false' }} }" class="p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border border-purple-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <label for="is_on_sale" class="block text-sm font-bold text-gray-900">Produto em Promoção?</label>
+                            <p class="text-xs text-gray-500 mt-1">Habilita o preço promocional para este produto</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                name="is_on_sale" 
+                                id="is_on_sale" 
+                                value="1" 
+                                x-model="isOnSale"
+                                class="sr-only peer"
+                            >
+                            <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-purple-600"></div>
+                        </label>
+                    </div>
+
+                    <div x-show="isOnSale" x-transition class="mt-4">
+                        <x-form-input
+                            label="Preço Promocional"
+                            name="promo_price"
+                            type="number"
+                            step="0.01"
+                            :value="old('promo_price', $product->promo_price)"
+                            placeholder="0.00"
+                            helper="Deve ser menor que o preço original"
+                            class="bg-white border-purple-200 focus:border-purple-500 focus:ring-purple-500/10"
+                        />
+                    </div>
+                </div>
+
+                <x-form-input
+                    label="URL de Afiliado"
+                    name="affiliate_url"
+                    type="url"
+                    :value="old('affiliate_url', $product->affiliate_url)"
+                    placeholder="https://..."
+                    :required="true"
+                    :error="$errors->first('affiliate_url')"
+                    helper="Link para onde o cliente será redirecionado"
+                />
+
+                <x-form-input
+                    label="Descrição Curta"
+                    name="short_description"
+                    type="textarea"
+                    :value="old('short_description', $product->short_description)"
+                    placeholder="Resumo do produto"
+                    :error="$errors->first('short_description')"
+                />
+
+                <x-form-input
+                    label="Descrição Completa"
+                    name="description"
+                    type="textarea"
+                    :value="old('description', $product->description)"
+                    placeholder="Descrição detalhada do produto"
+                    :error="$errors->first('description')"
+                />
+
+                <!-- Current Image -->
+                @if($product->image_path)
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-gray-700">Imagem Atual</label>
+                        <div class="flex items-center space-x-4">
+                            <div class="h-32 w-32 rounded-2xl overflow-hidden bg-gradient-to-br from-gray-100 to-indigo-50 ring-2 ring-gray-200">
+                                <img src="{{ asset('storage/' . $product->image_path) }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- New Image -->
+                <div class="space-y-2">
+                    <label for="image" class="block text-sm font-bold text-gray-700">
+                        {{ $product->image_path ? 'Substituir Imagem' : 'Adicionar Imagem' }}
+                    </label>
+                    <input 
+                        type="file" 
+                        name="image" 
+                        id="image"
+                        accept="image/*"
+                        class="block w-full px-4 py-3 rounded-xl border-gray-200 bg-gray-50 text-gray-900 focus:bg-white focus:border-indigo-600 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 sm:text-sm"
+                    />
+                    @error('image')
+                        <p class="mt-2 text-sm text-red-600 flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                            {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+
+                <!-- Status Toggle -->
+                <div class="flex items-center justify-between p-6 bg-gradient-to-r from-gray-50 to-indigo-50 rounded-2xl border border-gray-200">
+                    <div>
+                        <label for="is_active" class="block text-sm font-bold text-gray-900">Produto Ativo</label>
+                        <p class="text-xs text-gray-500 mt-1">O produto estará visível no site público</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', $product->is_active) ? 'checked' : '' }} class="sr-only peer">
+                        <div class="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-indigo-600 peer-checked:to-purple-600"></div>
+                    </label>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+                    <x-button variant="secondary" href="{{ route('admin.products.index') }}">
+                        Cancelar
+                    </x-button>
+                    <x-button variant="primary" type="submit">
+                        <svg class="-ml-1 mr-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Atualizar Produto
+                    </x-button>
+                </div>
+            </form>
+        </x-card>
     </div>
-
-    <style>
-        input:checked ~ .dot {
-            transform: translateX(100%);
-        }
-        input:checked ~ .block {
-            background-color: #4F46E5;
-        }
-    </style>
 @endsection

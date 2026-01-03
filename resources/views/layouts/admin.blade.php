@@ -90,35 +90,25 @@
 
                     <!-- User Menu -->
                     <div class="flex items-center gap-x-4 lg:gap-x-6">
-                        <div class="relative group">
-                            <button type="button" class="flex items-center gap-x-3 px-4 py-2 rounded-2xl hover:bg-gray-100 transition-all duration-300">
-                                <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-black shadow-lg">
-                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                </div>
-                                <div class="text-left hidden lg:block">
-                                    <p class="text-sm font-bold text-gray-900">{{ Auth::user()->name }}</p>
-                                    <p class="text-xs text-gray-500">Administrador</p>
-                                </div>
-                                <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                                </svg>
-                            </button>
-
-                            <!-- Dropdown -->
-                            <div class="hidden group-hover:block absolute right-0 mt-2 w-56 origin-top-right rounded-2xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden">
-                                <div class="p-2">
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="w-full text-left flex items-center gap-x-3 px-4 py-3 text-sm font-bold text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-xl transition-colors">
-                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                                            </svg>
-                                            Sair
-                                        </button>
-                                    </form>
-                                </div>
+                        <div class="flex items-center gap-x-3 px-4 py-2">
+                            <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-black shadow-lg">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </div>
+                            <div class="text-left hidden lg:block">
+                                <p class="text-sm font-bold text-gray-900">{{ Auth::user()->name }}</p>
+                                <p class="text-xs text-gray-500">Administrador</p>
                             </div>
                         </div>
+
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="flex items-center gap-x-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all duration-200 shadow-sm cursor-pointer">
+                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                </svg>
+                                <span class="hidden sm:inline">Sair</span>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

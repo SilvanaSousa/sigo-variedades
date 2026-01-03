@@ -11,7 +11,8 @@ class RegisterClickAction
 {
     public function execute(Product $product): void
     {
-        $uuid = Request::cookie('visit_uuid');
+        // Get UUID injected by middleware (works because RedirectController is web route)
+        $uuid = request()->attributes->get('visit_uuid');
         
         if (!$uuid) {
             return;

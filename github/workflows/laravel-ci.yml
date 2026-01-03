@@ -1,0 +1,51 @@
+name: Laravel CI
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs: # <-- Bloco principal para todos os jobs
+  laravel-tests: # <-- Primeiro job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, dom, fileinfo, mysql
+          coverage: none
+      - name: Install Composer dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Copy .env file
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      - name: Generate application key
+        run: php artisan key:generate
+      - name: Run tests
+        run: vendor/bin/phpunit
+
+  deploy: # <-- Segundo job, agora corretamente dentro de 'jobs'
+    needs: laravel-tests # Depende do sucesso do primeiro job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository # É necessário fazer o checkout novamente em cada job
+        uses: actions/checkout@v3
+      - name: Deploy to Shared Hosting
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /home/u519919949/domains/sigochef.com.br/public_html/
+            git pull origin main
+            rm -f bootstrap/cache/*.php
+            composer install --no-dev --optimize-autoloader
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan migrate --force
