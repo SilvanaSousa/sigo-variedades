@@ -30,6 +30,8 @@ jobs: # <-- Bloco principal para todos os jobs
   deploy: # <-- Segundo job, agora corretamente dentro de 'jobs'
     needs: laravel-tests # Depende do sucesso do primeiro job
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
     steps:
       - name: Checkout repository # É necessário fazer o checkout novamente em cada job
         uses: actions/checkout@v3
@@ -44,6 +46,9 @@ jobs: # <-- Bloco principal para todos os jobs
           echo "USERNAME START"
           echo "${{ secrets.SSH_USERNAME }}"
           echo "USERNAME END"
+          echo "PORT START"
+          echo "${{ secrets.SSH_PORT }}"
+          echo "PORT END"
       - name: Deploy to Shared Hosting
         uses: appleboy/ssh-action@master
         with:
