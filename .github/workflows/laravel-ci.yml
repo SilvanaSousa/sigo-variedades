@@ -43,8 +43,7 @@ jobs: # <-- Bloco principal para todos os jobs
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            BASE_DIR=/home/u519919949/domains/sigovariedades.shop
-            APP_DIR=$BASE_DIR/app
+            APP_DIR=/home/u519919949/domains/sigovariedades.shop
 
             mkdir -p $BASE_DIR
 
