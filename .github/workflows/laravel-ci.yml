@@ -38,6 +38,12 @@ jobs: # <-- Bloco principal para todos os jobs
           echo "KEY START"
           echo "${{ secrets.SSH_PRIVATE_KEY }}" | head -n 2
           echo "KEY END"
+          echo "HOST START"
+          echo "${{ secrets.SSH_HOST }}"
+          echo "HOST END"
+          echo "USERNAME START"
+          echo "${{ secrets.SSH_USERNAME }}"
+          echo "USERNAME END"
       - name: Deploy to Shared Hosting
         uses: appleboy/ssh-action@master
         with:
