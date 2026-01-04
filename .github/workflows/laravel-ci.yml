@@ -35,20 +35,6 @@ jobs: # <-- Bloco principal para todos os jobs
     steps:
       - name: Checkout repository # É necessário fazer o checkout novamente em cada job
         uses: actions/checkout@v3
-      - name: Debug SSH Key
-        run: |
-          echo "KEY START"
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | head -n 2
-          echo "KEY END"
-          echo "HOST START"
-          echo "${{ secrets.SSH_HOST }}"
-          echo "HOST END"
-          echo "USERNAME START"
-          echo "${{ secrets.SSH_USERNAME }}"
-          echo "USERNAME END"
-          echo "PORT START"
-          echo "${{ secrets.SSH_PORT }}"
-          echo "PORT END"
       - name: Deploy to Shared Hosting
         uses: appleboy/ssh-action@master
         with:
@@ -57,12 +43,28 @@ jobs: # <-- Bloco principal para todos os jobs
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            echo "SSH OK"
-            cd /home/u909427438/domains/sigovariedades.shop/public_html/
-            git pull origin main
-            rm -f bootstrap/cache/*.php
+            BASE_DIR=/home/u519919949/domains/sigovariedades.shop
+            APP_DIR=$BASE_DIR/app
+
+            mkdir -p $BASE_DIR
+
+            if [ ! -d "$APP_DIR/.git" ]; then
+              echo "Primeiro deploy - clonando repositório"
+              git clone https://${{ secrets.GIT_TOKEN }}@github.com/SilvanaSousa/sigo-variedades.git $APP_DIR
+            else
+              echo "Atualizando repositório"
+              cd $APP_DIR
+              git pull origin main
+            fi
+
+            cd $APP_DIR
+
             composer install --no-dev --optimize-autoloader
+
+            php artisan key:generate --force || true
+            php artisan migrate --force || true
+
+            php artisan config:clear
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
-            php artisan migrate --force
