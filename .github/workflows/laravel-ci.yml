@@ -18,8 +18,12 @@ jobs: # <-- Bloco principal para todos os jobs
           php-version: '8.2'
           extensions: mbstring, dom, fileinfo, mysql
           coverage: none
+      - name: Clear bootstrap cache
+        run: rm -rf bootstrap/cache/*
       - name: Install Composer dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Dump autoload
+        run: composer dump-autoload
       - name: Copy .env file
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
       - name: Generate application key
@@ -55,7 +59,8 @@ jobs: # <-- Bloco principal para todos os jobs
             fi
 
             cd $APP_DIR
-
+            
+            rm -rf bootstrap/cache/*
             composer2 install --no-dev --optimize-autoloader
             composer2 dump-autoload
             php artisan key:generate --force || true
