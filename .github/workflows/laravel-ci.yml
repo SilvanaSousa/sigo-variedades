@@ -43,7 +43,7 @@ jobs: # <-- Bloco principal para todos os jobs
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            APP_DIR=/home/u519919949/domains/sigovariedades.shop
+            APP_DIR=/home/u519919949/domains/sigovariedades.shop/public_html
 
             if [ ! -d "$APP_DIR/.git" ]; then
               echo "Primeiro deploy - clonando repositório"
