@@ -54,13 +54,6 @@
             </button>
         </div>
 
-        <div class="mt-6 text-center">
-            <p class="text-sm text-gray-600">
-                Não tem uma conta?
-                <a href="{{ route('register') }}" class="font-bold text-indigo-600 hover:text-indigo-900">
-                    Criar conta
-                </a>
-            </p>
-        </div>
+
     </form>
 @endsection

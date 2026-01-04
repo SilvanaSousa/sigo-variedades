@@ -45,9 +45,7 @@
                     <div class="flex items-center space-x-4">
                         @guest
                             <a href="{{ route('login') }}" class="text-sm font-bold text-gray-600 hover:text-indigo-600 transition-colors">Entrar</a>
-                            <a href="{{ route('register') }}" class="hidden sm:inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200">
-                                Criar conta
-                            </a>
+
                         @else
                             <a href="{{ route('admin.dashboard') }}" class="text-sm font-bold text-gray-600 hover:text-indigo-600 transition-colors">Dashboard</a>
                             <form method="POST" action="{{ route('logout') }}" class="inline">
