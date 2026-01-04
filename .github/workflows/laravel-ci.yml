@@ -33,6 +33,11 @@ jobs: # <-- Bloco principal para todos os jobs
     steps:
       - name: Checkout repository # É necessário fazer o checkout novamente em cada job
         uses: actions/checkout@v3
+      - name: Debug SSH Key
+        run: |
+          echo "KEY START"
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | head -n 2
+          echo "KEY END"
       - name: Deploy to Shared Hosting
         uses: appleboy/ssh-action@master
         with:
