@@ -58,8 +58,8 @@ jobs: # <-- Bloco principal para todos os jobs
 
             cd $APP_DIR
 
-            composer install --no-dev --optimize-autoloader
-
+            composer2 install --no-dev --optimize-autoloader
+            composer2 dump-autoload
             php artisan key:generate --force || true
             php artisan migrate --force || true
 
