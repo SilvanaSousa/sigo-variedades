@@ -45,8 +45,6 @@ jobs: # <-- Bloco principal para todos os jobs
           script: |
             APP_DIR=/home/u519919949/domains/sigovariedades.shop
 
-            mkdir -p $BASE_DIR
-
             if [ ! -d "$APP_DIR/.git" ]; then
               echo "Primeiro deploy - clonando repositório"
               git clone https://${{ secrets.GIT_TOKEN }}@github.com/SilvanaSousa/sigo-variedades.git $APP_DIR
