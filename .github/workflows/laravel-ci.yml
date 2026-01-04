@@ -19,11 +19,11 @@ jobs: # <-- Bloco principal para todos os jobs
           extensions: mbstring, dom, fileinfo, mysql
           coverage: none
       - name: Clear bootstrap cache
-        run: rm -rf bootstrap/cache/*
+        run: rm -f bootstrap/cache/*.php
       - name: Install Composer dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
       - name: Dump autoload
-        run: composer dump-autoload
+        run: composer dump-autoload --optimize
       - name: Copy .env file
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
       - name: Generate application key
@@ -60,13 +60,21 @@ jobs: # <-- Bloco principal para todos os jobs
 
             cd $APP_DIR
             
-            rm -rf bootstrap/cache/*
-            composer2 install --no-dev --optimize-autoloader
-            composer2 dump-autoload
+            # Limpa caches de bootstrap que podem causar erros de 'Class not found'
+            rm -f bootstrap/cache/*.php
+            
+            # Instala dependências sem rodar os scripts automáticos (que bootam o Laravel)
+            composer2 install --no-dev --optimize-autoloader --no-scripts
+            
+            # Gera o autoloader limpo e otimizado
+            composer2 dump-autoload --optimize
+            
+            # Agora executa os comandos do Laravel de forma segura
+            php artisan package:discover --ansi
             php artisan key:generate --force || true
             php artisan migrate --force || true
 
-            php artisan config:clear
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
+
