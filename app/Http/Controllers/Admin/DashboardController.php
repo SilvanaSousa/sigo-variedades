@@ -97,12 +97,5 @@ class DashboardController extends Controller
         ));
     }
 
-    public function resetMetrics()
-    {
-        Visit::truncate();
-        ProductView::truncate();
-        Click::truncate();
 
-        return back()->with('success', 'Métricas resetadas com sucesso!');
-    }
 }

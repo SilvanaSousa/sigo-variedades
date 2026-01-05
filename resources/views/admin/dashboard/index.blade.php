@@ -267,25 +267,60 @@
             </x-card>
 
             <!-- Danger Zone -->
-            <x-card>
-                <div class="flex items-start space-x-4">
-                    <div class="bg-gradient-to-br from-red-50 to-rose-50 p-4 rounded-2xl">
-                        <svg class="w-8 h-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-black text-gray-900 mb-2">Zona de Perigo</h3>
-                        <p class="text-sm text-gray-600 mb-4">Resetar todas as métricas para validação.</p>
-                        <form action="{{ route('admin.reset-metrics') }}" method="POST" onsubmit="return confirm('Tem certeza? Isso apagará todo o histórico de visitas, views e cliques.');">
-                            @csrf
-                            <button type="submit" class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 font-medium text-sm transition-colors duration-200 cursor-pointer">
-                                Resetar Métricas
-                            </button>
-                        </form>
+            <!-- Danger Zone -->
+            <div class="bg-white rounded-2xl shadow-sm border-2 border-red-100 overflow-hidden relative">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-red-600"></div>
+                <div class="p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-start gap-5">
+                        <div class="p-3 bg-red-50 rounded-xl text-red-600 shrink-0">
+                            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 w-full" x-data="{ confirmed: false }">
+                            <h3 class="text-xl font-black text-gray-900 mb-1">Zona de Perigo</h3>
+                            <p class="text-sm text-gray-500 mb-6 leading-relaxed">
+                                Ações nesta área são <span class="text-red-600 font-bold">destrutivas e irreversíveis</span>. 
+                                Certifique-se do que está fazendo antes de prosseguir.
+                            </p>
+                            
+                            <form action="{{ route('admin.metrics.reset') }}" method="POST" class="space-y-4">
+                                @csrf
+                                <div class="bg-red-50 rounded-xl p-4 border border-red-100">
+                                    <h4 class="text-sm font-bold text-red-800 mb-2">Resetar Métricas de Analytics</h4>
+                                    <p class="text-xs text-red-600 mb-4">
+                                        Isso apagará permanentemente todo o histórico de visitas, visualizações de produtos e cliques.
+                                        Os produtos e categorias <strong>não</strong> serão afetados.
+                                    </p>
+                                    
+                                    <div class="flex items-start gap-3 mb-4">
+                                        <div class="flex h-5 items-center">
+                                            <input id="confirm_reset" 
+                                                   name="confirm_reset" 
+                                                   type="checkbox" 
+                                                   x-model="confirmed"
+                                                   class="h-4 w-4 rounded border-red-300 text-red-600 focus:ring-red-600 cursor-pointer">
+                                        </div>
+                                        <div class="text-xs leading-5">
+                                            <label for="confirm_reset" class="font-medium text-red-700 cursor-pointer select-none">
+                                                Eu entendo que essa ação é irreversível e desejo continuar.
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" 
+                                            :disabled="!confirmed"
+                                            :class="!confirmed ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-700 hover:shadow-lg hover:shadow-red-200 transform active:scale-95'"
+                                            class="w-full sm:w-auto px-6 py-2.5 bg-red-600 text-white rounded-lg font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        Apagar Dados de Métricas
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </x-card>
+            </div>
         </div>
     </div>
 @endsection

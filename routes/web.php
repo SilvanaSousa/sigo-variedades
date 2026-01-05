@@ -75,7 +75,7 @@ Route::middleware('auth')->group(function () {
  */
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::post('/reset-metrics', [DashboardController::class, 'resetMetrics'])->name('reset-metrics');
+    Route::post('/metrics/reset', [\App\Http\Controllers\Admin\MetricsController::class, 'reset'])->name('metrics.reset');
     Route::resource('products', AdminProductController::class);
     Route::resource('categories', CategoryController::class);
 });
