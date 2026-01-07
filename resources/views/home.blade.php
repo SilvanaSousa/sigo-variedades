@@ -42,12 +42,14 @@
     </div>
 
     <!-- Categories Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 sm:mb-28">
-        <div class="text-center mb-12 sm:mb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 sm:mb-28 relative z-30">
+        <div class="text-center mb-10 sm:mb-16">
             <h2 class="text-3xl sm:text-4xl font-black text-gray-900 tracking-tight">Navegue por Categorias</h2>
             <div class="mt-4 h-1.5 w-20 bg-indigo-600 mx-auto rounded-full"></div>
         </div>
-        <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+
+        <!-- Desktop Grid (md and up) - Kept exactly as original -->
+        <div class="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             @foreach($categories as $category)
                 <a href="{{ route('products.index', ['category' => $category->id]) }}" class="group relative bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm hover:shadow-xl hover:shadow-indigo-100 border border-gray-100 transition-all duration-300 transform hover:-translate-y-1">
                     <div class="flex items-center space-x-4">
@@ -62,10 +64,66 @@
                 </a>
             @endforeach
         </div>
+
+        <!-- Mobile Optimized Category Selector (sm and below) -->
+        <div class="md:hidden relative" x-data="{ open: false }">
+            <button 
+                @click="open = !open" 
+                class="w-full flex items-center justify-between px-6 py-5 bg-white border-2 border-indigo-50 rounded-[2rem] shadow-sm active:scale-[0.98] transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/10"
+                :class="{ 'border-indigo-200 shadow-xl': open }"
+            >
+                <div class="flex items-center gap-4">
+                    <div class="p-2.5 bg-indigo-600 text-white rounded-2xl shadow-lg shadow-indigo-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h7"/></svg>
+                    </div>
+                    <div class="text-left">
+                        <span class="block text-[10px] font-black text-indigo-600 uppercase tracking-widest mb-0.5">Explorar por</span>
+                        <span class="block text-base font-bold text-gray-900 leading-none">Escolha uma Categoria</span>
+                    </div>
+                </div>
+                <div class="text-indigo-600 transition-transform duration-300" :class="{ 'rotate-180': open }">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+            </button>
+
+            <!-- Mobile Dropdown Menu -->
+            <div 
+                x-show="open" 
+                @click.away="open = false"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 scale-95"
+                class="absolute z-50 left-0 right-0 mt-3 bg-white border border-indigo-50 rounded-[2rem] shadow-2xl overflow-hidden max-h-[60vh] overflow-y-auto no-scrollbar"
+                style="display: none;"
+            >
+                <div class="p-3 space-y-1.5">
+                    <a href="{{ route('products.index') }}" class="flex items-center justify-between px-5 py-4 rounded-2xl bg-gray-50 hover:bg-indigo-50 transition-colors group">
+                        <span class="font-bold text-gray-900 group-hover:text-indigo-600">Ver Todas</span>
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                    
+                    @foreach($categories as $category)
+                        <a href="{{ route('products.index', ['category' => $category->id]) }}" 
+                           class="flex items-center justify-between px-5 py-4 rounded-2xl hover:bg-indigo-50 transition-colors group border border-transparent hover:border-indigo-100">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-gray-900 group-hover:text-indigo-600">{{ $category->name }}</span>
+                                <span class="text-xs font-semibold text-gray-400 group-hover:text-indigo-400">{{ $category->products_count }} produtos</span>
+                            </div>
+                            <div class="bg-indigo-50/50 p-2 rounded-xl group-hover:bg-white group-hover:text-indigo-600 text-indigo-400 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Featured Products Section -->
-    <div class="bg-gray-50 py-16 sm:py-24 mb-20">
+    <div class="bg-gray-50 py-16 sm:py-24 mb-20 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex flex-col sm:flex-row items-baseline justify-between mb-12 gap-4">
                 <div>

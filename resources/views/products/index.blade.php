@@ -36,22 +36,81 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 sm:mt-12">
             <div class="flex flex-col lg:flex-row gap-8 sm:gap-12">
                 <!-- Filters Section -->
-                <div class="w-full lg:w-64 shrink-0">
+                <div class="w-full lg:w-64 shrink-0 relative z-30">
                     <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm sticky top-28">
                         <h2 class="text-sm font-black text-gray-400 uppercase tracking-widest mb-6">Categorias</h2>
-                        <div class="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-4 lg:pb-0 lg:overflow-x-visible no-scrollbar">
+                        <!-- Desktop Categories List (Visible on lg and up) -->
+                        <div class="hidden lg:flex flex-col gap-2">
                             <a href="{{ route('products.index', ['q' => request('q')]) }}" 
-                                class="whitespace-nowrap flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all {{ !request('category') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-gray-600 hover:bg-gray-50' }}">
+                                class="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all {{ !request('category') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-gray-600 hover:bg-gray-50' }}">
                                 <span>Todas</span>
-                                <span class="hidden lg:inline ml-2 px-2 py-0.5 rounded-lg text-xs {{ !request('category') ? 'bg-white/20' : 'bg-gray-100' }}">{{ \App\Models\Product::where('is_active', true)->count() }}</span>
+                                <span class="px-2 py-0.5 rounded-lg text-xs {{ !request('category') ? 'bg-white/20' : 'bg-gray-100' }}">{{ \App\Models\Product::where('is_active', true)->count() }}</span>
                             </a>
                             @foreach($categories as $category)
                                 <a href="{{ route('products.index', ['category' => $category->id, 'q' => request('q')]) }}" 
-                                    class="whitespace-nowrap flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all {{ request('category') == $category->id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-gray-600 hover:bg-gray-50' }}">
+                                    class="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all {{ request('category') == $category->id ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100' : 'text-gray-600 hover:bg-gray-50' }}">
                                     <span>{{ $category->name }}</span>
-                                    <span class="hidden lg:inline ml-2 px-2 py-0.5 rounded-lg text-xs {{ request('category') == $category->id ? 'bg-white/20' : 'bg-gray-100' }}">{{ $category->products_count ?? $category->products()->count() }}</span>
+                                    <span class="px-2 py-0.5 rounded-lg text-xs {{ request('category') == $category->id ? 'bg-white/20' : 'bg-gray-100' }}">{{ $category->products_count ?? $category->products()->count() }}</span>
                                 </a>
                             @endforeach
+                        </div>
+
+                        <!-- Mobile Optimized Category Selector (Below lg) -->
+                        <div class="lg:hidden relative" x-data="{ open: false }">
+                            <button 
+                                @click="open = !open" 
+                                class="w-full flex items-center justify-between px-5 py-4 bg-white border-2 border-indigo-50 rounded-2xl shadow-sm active:scale-[0.98] transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-indigo-500/10"
+                                :class="{ 'border-indigo-200 shadow-md': open }"
+                            >
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2 bg-indigo-600 text-white rounded-lg shadow-lg shadow-indigo-100">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h7"/></svg>
+                                    </div>
+                                    <div class="text-left leading-tight">
+                                        <span class="block text-[10px] font-black text-indigo-600 uppercase tracking-widest">Filtrar por</span>
+                                        <span class="block text-sm font-bold text-gray-900">
+                                            @php
+                                                $currentCategory = $categories->firstWhere('id', request('category'));
+                                            @endphp
+                                            {{ $currentCategory ? $currentCategory->name : 'Todas as Categorias' }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <svg class="w-5 h-5 text-indigo-600 transition-transform duration-300" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div 
+                                x-show="open" 
+                                @click.away="open = false"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 translate-y-4 scale-95"
+                                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                x-transition:leave-end="opacity-0 translate-y-4 scale-95"
+                                class="absolute z-50 left-0 right-0 mt-2 bg-white border border-indigo-50 rounded-2xl shadow-2xl overflow-hidden max-h-[50vh] overflow-y-auto no-scrollbar"
+                                style="display: none;"
+                            >
+                                <div class="p-2 space-y-1">
+                                    <a href="{{ route('products.index', ['q' => request('q')]) }}" 
+                                        class="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold {{ !request('category') ? 'bg-indigo-50 text-indigo-600' : 'text-gray-600 hover:bg-gray-50' }}">
+                                        <span>Todas as Categorias</span>
+                                        <span class="text-[10px] {{ !request('category') ? 'bg-white' : 'bg-gray-100' }} px-2 py-0.5 rounded-lg border border-indigo-100">
+                                            {{ \App\Models\Product::where('is_active', true)->count() }}
+                                        </span>
+                                    </a>
+                                    @foreach($categories as $category)
+                                        <a href="{{ route('products.index', ['category' => $category->id, 'q' => request('q')]) }}" 
+                                            class="flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold {{ request('category') == $category->id ? 'bg-indigo-50 text-indigo-600' : 'text-gray-600 hover:bg-gray-50' }}">
+                                            <span>{{ $category->name }}</span>
+                                            <span class="text-[10px] {{ request('category') == $category->id ? 'bg-white' : 'bg-gray-100' }} px-2 py-0.5 rounded-lg border border-indigo-100">
+                                                {{ $category->products_count ?? $category->products()->count() }}
+                                            </span>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
                         </div>
 
                         @if(request()->anyFilled(['q', 'category']))
